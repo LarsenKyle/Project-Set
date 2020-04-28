@@ -6,6 +6,7 @@
 
 <script>
 import Section from "../components/Section";
+
 export default {
   data() {
     return {
