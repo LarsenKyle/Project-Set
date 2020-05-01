@@ -87,7 +87,7 @@ export const state = () => ({
     }
   ]
 });
-export const getters = () => ({});
+export const getters = {};
 export const actions = {};
 export const mutations = {
   add(state, payload) {
@@ -101,12 +101,14 @@ export const mutations = {
     });
   },
   deleteRoute(state, payload) {
-    payload.forEach(load => {
-      state.sections.forEach(section => {
-        section.routes = section.routes.filter(route => {
-          return route.id !== load;
+    if (state.selected) {
+      payload.forEach(load => {
+        state.sections.forEach(section => {
+          section.routes = section.routes.filter(route => {
+            return route.id !== load;
+          });
         });
       });
-    });
+    }
   }
 };

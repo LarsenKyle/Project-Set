@@ -35,7 +35,7 @@ export default {
   props: ["section"],
   data() {
     return {
-      //Component Controller
+      //Modal toggle controller vuetify
       dialog: false,
       //For adding route
       name: "",

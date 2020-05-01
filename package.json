@@ -1,7 +1,7 @@
 {
   "name": "project-set",
   "version": "1.0.0",
-  "description": "App to manage setting programs",
+  "description": "Manage your setting program effectivly with Project Set",
   "author": "LarsenKyle",
   "private": true,
   "scripts": {

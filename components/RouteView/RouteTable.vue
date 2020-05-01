@@ -1,5 +1,6 @@
 <template>
   <div class="table">
+    <EditRoute @clicked="closeDialog" :route="route" :dialog.sync="dialog" />
     <v-data-table
       id="route-table"
       v-model="selected"
@@ -17,10 +18,17 @@
 
 <script>
 import { mapMutations } from "vuex";
+import EditRoute from "./EditRoute";
 export default {
+  name: "Route",
+  components: {
+    EditRoute
+  },
   data() {
     return {
-      name: "Route",
+      //Props passed to "EditRoute" component
+      dialog: false,
+      route: null,
       //Vuetify Table Config
       /////////////////////
       singleSelect: false,
@@ -40,6 +48,7 @@ export default {
   },
   watch: {
     selected: {
+      //Runs function when route is selected
       handler: function(val, oldVal) {
         this.updateSelected();
       }
@@ -47,25 +56,36 @@ export default {
   },
   methods: {
     updateSelected() {
+      //Updated "Selected" array in store
+      //Allows for batch delete
       const selectedId = [];
       this.selected.forEach(route => {
         selectedId.push(route.id);
       });
-
       this.$store.commit("sections/add", selectedId);
     },
     editRoute(value) {
-      console.log(value);
+      //Updates props sent to "EditRoute" component
+      //////////////
+      this.route = value;
+      this.dialog = !this.dialog;
+    },
+    closeDialog(val) {
+      this.dialog = val;
     }
   },
+  //Props from "Section" component
   props: ["routes"]
 };
 </script>
 
-<style lang="scss" >
-@import ".././assets/variables.scss";
+<style lang="scss">
+@import "../.././assets/variables.scss";
 #route-table thead th {
   color: $primary;
   font-size: 1rem;
+}
+#route-table tbody tr td {
+  cursor: pointer;
 }
 </style>
