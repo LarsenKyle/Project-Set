@@ -2,7 +2,7 @@
   <div class="Section">
     <v-expansion-panels>
       <v-expansion-panel v-for="section in sections" :key="section.id">
-        <v-expansion-panel-header>{{section.name}}</v-expansion-panel-header>
+        <v-expansion-panel-header>{{ section.name }}</v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="text-right">
             <DeleteRoute />

@@ -1,6 +1,6 @@
 <template>
   <v-bottom-navigation>
-    <v-btn @click="navTime('config')" value="recent">
+    <v-btn class="ml-auto" @click="navTime('config')" value="recent">
       <span>Gym Config</span>
       <v-icon v-if="!loading">mdi-cog</v-icon>
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
@@ -17,10 +17,12 @@
       <v-icon v-if="!loading">mdi-account</v-icon>
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
     </v-btn>
+    <v-btn @click="logout" color="primary" class="ml-auto">Log Out</v-btn>
   </v-bottom-navigation>
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   data() {
     return {
@@ -32,12 +34,16 @@ export default {
       this.$router.push({
         path: `/${path}`
       });
+    },
+    async logout() {
+      await firebase.auth().signOut();
+      this.$router.push({ path: "login" });
     }
   },
-  mounted() {
+  async mounted() {
     setTimeout(() => {
       this.loading = false;
-    }, 200);
+    }, 300);
   }
 };
 </script>
