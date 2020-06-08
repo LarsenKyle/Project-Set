@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import firebase from "firebase";
+import { fireDb } from "../../plugins/firebase";
 export default {
   name: "AddRoute",
   props: ["section"],
@@ -45,15 +47,23 @@ export default {
     };
   },
   methods: {
-    addRoute() {
+    async addRoute() {
+      const user = this.$store.state.auth;
+
       const route = {
         name: this.name,
         grade: this.grade,
         color: this.color,
-        setter: this.setter
+        setter: this.setter,
+        section: this.section.name
       };
-      const theSection = this.section;
-      this.$store.commit("sections/addRoute", { route, theSection });
+
+      await fireDb
+        .collection("users")
+        .doc(user)
+        .collection("routes")
+        .add(route);
+
       this.dialog = false;
       this.name = "";
       this.grade = "";

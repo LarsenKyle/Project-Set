@@ -15,7 +15,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="emitDialog" color="primary">Save Changes</v-btn>
+          <v-btn @click="updateRoute" color="primary">Save Changes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { fireDb } from "../../plugins/firebase";
 export default {
   props: ["route", "dialog"],
   //Watcher for populating the EditRoute modal
@@ -44,7 +45,20 @@ export default {
     };
   },
   methods: {
-    emitDialog() {
+    async updateRoute() {
+      const user = this.$store.state.auth;
+      const newRoute = {
+        name: this.name,
+        grade: this.grade,
+        color: this.color,
+        setter: this.setter
+      };
+      fireDb
+        .collection("users")
+        .doc(user)
+        .collection("routes")
+        .doc(this.route.id)
+        .update(newRoute);
       //Passing back prop to avoid vue warn
       this.$emit("clicked", !this.dialog);
     }

@@ -17,12 +17,20 @@
       <v-icon v-if="!loading">mdi-account</v-icon>
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
     </v-btn>
-    <v-btn @click="logout" color="primary" class="ml-auto">Log Out</v-btn>
+    <v-btn v-if="$store.state.auth" @click="logout" color="primary" class="ml-auto">Log Out</v-btn>
+    <v-btn
+      v-if="!$store.state.auth"
+      @click="navTime('login')"
+      color="primary"
+      class="ml-auto"
+    >Log In</v-btn>
   </v-bottom-navigation>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import firebase from "firebase";
+import { fireDb } from "../plugins/firebase";
 export default {
   data() {
     return {
@@ -38,9 +46,23 @@ export default {
     async logout() {
       await firebase.auth().signOut();
       this.$router.push({ path: "login" });
+      this.$store.commit("addUser", null);
     }
   },
   async mounted() {
+    try {
+      await this.$store.dispatch("getUser");
+    } catch (err) {
+      console.log(err);
+      if (!this.$store.state.auth) {
+        this.$router.push({ path: "login" });
+      }
+    }
+
+    if (this.$store.state.auth) {
+      await this.$store.dispatch("sections/getRoutes");
+    }
+
     setTimeout(() => {
       this.loading = false;
     }, 300);

@@ -1,11 +1,16 @@
 <template>
   <v-layout justify-center align-center>
-    <h1>Account Manage</h1>
+    <ChangePassword />
   </v-layout>
 </template>
 
 <script>
-export default {};
+import ChangePassword from "../components/GymConfig/EmailReset";
+export default {
+  components: {
+    ChangePassword
+  }
+};
 </script>
 
 <style lang="scss"></style>

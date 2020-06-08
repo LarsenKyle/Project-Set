@@ -34,6 +34,7 @@
               <v-btn @click="loginUser" color="primary">Sign In</v-btn>
             </v-card-actions>
           </v-card>
+          <ConfirmAction />
         </v-col>
       </v-row>
     </v-container>
@@ -43,9 +44,11 @@
 <script>
 import firebase from "firebase";
 import Snackbar from "../components/Snackbar";
+import ConfirmAction from "../components/RouteView/ConfirmAction";
 export default {
   components: {
-    Snackbar
+    Snackbar,
+    ConfirmAction
   },
   data() {
     return {
@@ -65,9 +68,11 @@ export default {
   methods: {
     async loginUser() {
       try {
-        await firebase
+        const user = await firebase
           .auth()
           .signInWithEmailAndPassword(this.email, this.password);
+        await this.$store.dispatch("getUser");
+        await this.$store.dispatch("sections/getRoutes");
         this.$router.push({ path: "/" });
       } catch (err) {
         (this.text = err.message),
@@ -82,4 +87,5 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style scoped lang="scss">
+</style>

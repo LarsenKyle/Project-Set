@@ -5,7 +5,7 @@
       id="route-table"
       v-model="selected"
       :headers="headers"
-      :items="routes"
+      :items="sectionsRoutes"
       @click:row="editRoute"
       :single-select="singleSelect"
       item-key="id"
@@ -18,6 +18,7 @@
 
 <script>
 import { mapMutations } from "vuex";
+import { fireDb } from "../../plugins/firebase";
 import EditRoute from "./EditRoute";
 export default {
   name: "Route",
@@ -29,6 +30,8 @@ export default {
       //Props passed to "EditRoute" component
       dialog: false,
       route: null,
+      sectionsRoutes: [],
+      routes: [],
       //Vuetify Table Config
       /////////////////////
       singleSelect: false,
@@ -52,8 +55,55 @@ export default {
       handler: function(val, oldVal) {
         this.updateSelected();
       }
+    },
+    routes: function(val) {
+      val.forEach(v => {
+        if (!this.sectionsRoutes.includes(v)) {
+          if (v.section === this.section) {
+            this.sectionsRoutes.push(v);
+          }
+        }
+      });
     }
   },
+  async mounted() {
+    const user = await this.$store.state.auth;
+    await fireDb
+      .collection("users")
+      .doc(user)
+      .collection("routes")
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "modified") {
+            let newRoute = change.doc.data();
+            newRoute.id = change.doc.id;
+            if (newRoute.section === this.section) {
+              const routeIndex = this.sectionsRoutes.indexOf(this.route);
+              this.sectionsRoutes.splice(routeIndex, 1, newRoute);
+            }
+          }
+          if (change.type === "added") {
+            let route = change.doc.data();
+            route.id = change.doc.id;
+            this.routes.push(route);
+            // this.$store.commit("sections/pushRoute", route);
+          }
+          if (change.type === "removed") {
+            let oldRoute = change.doc.id;
+            this.sectionsRoutes = this.sectionsRoutes.filter(route => {
+              return route.id !== oldRoute;
+            });
+          }
+        });
+      });
+
+    // this.routes.forEach(route => {
+    //   if (route.section === this.section) {
+    //     this.sectionsRoutes.push(route);
+    //   }
+    // });
+  },
+
   methods: {
     updateSelected() {
       //Updated "Selected" array in store
@@ -75,7 +125,7 @@ export default {
     }
   },
   //Props from "Section" component
-  props: ["routes"]
+  props: ["section"]
 };
 </script>
 

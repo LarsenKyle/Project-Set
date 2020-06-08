@@ -1,5 +1,5 @@
 <template>
-  <div @click="deleteRotue" class="delete">
+  <div @click="deleteRoute" class="delete">
     <v-tooltip top>
       <template #activator="{ on: tooltip }">
         <v-icon large color="blue" dark v-on="{...tooltip}">mdi-delete</v-icon>
@@ -11,11 +11,22 @@
 
 
 <script>
+import { fireDb } from "../../plugins/firebase";
 export default {
   methods: {
-    deleteRotue() {
+    async deleteRoute() {
       const selected = this.$store.state.sections.selected;
-      this.$store.commit("sections/deleteRoute", selected);
+      const user = this.$store.state.auth;
+      if (selected) {
+        await selected.forEach(route => {
+          fireDb
+            .collection("users")
+            .doc(user)
+            .collection("routes")
+            .doc(route)
+            .delete();
+        });
+      }
     }
   }
 };

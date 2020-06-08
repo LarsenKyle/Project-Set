@@ -1,11 +1,23 @@
 <template>
-  <v-layout column justify-center align-center>
-    <h1>Gym Settings</h1>
+  <v-layout id="config" justify-center align-center>
+    <AddSection />
+    <DeleteSection />
   </v-layout>
 </template>
 
 <script>
-export default {};
+import AddSection from "../components/GymConfig/AddSection";
+import DeleteSection from "../components/GymConfig/DeleteSection";
+export default {
+  components: {
+    AddSection,
+    DeleteSection
+  }
+};
 </script>
 
-<style></style>
+<style lang="scss" >
+#config {
+  flex-direction: column;
+}
+</style>

@@ -1,114 +1,64 @@
+import { fireDb } from "../plugins/firebase";
+import firebase from "firebase";
+
 export const state = () => ({
   selected: null,
-  sections: [
-    {
-      id: 1,
-      name: "Powers Wall",
-      type: "roped",
-      routes: [
-        {
-          name: "Ringus Bingus",
-          grade: "5.10a",
-          color: "Pink",
-          setter: "Sif",
-          id: 1
-        },
-        {
-          name: "Stabby Shabby",
-          grade: "5.10b",
-          color: "Orange",
-          setter: "Sif",
-          id: 2
-        },
-        {
-          name: "Stabby Acres",
-          grade: "5.12b",
-          color: "Pink",
-          setter: "Sif",
-          id: 3
-        }
-      ]
-    },
-    {
-      id: 2,
-      name: "Valhala",
-      type: "roped",
-      routes: [
-        {
-          name: "Ringus Bingus",
-          grade: "5.10a",
-          color: "Pink",
-          setter: "Sif",
-          id: 4
-        },
-        {
-          name: "Stabby Acres",
-          grade: "5.10b",
-          color: "Orange",
-          setter: "Sif",
-          id: 5
-        },
-        {
-          name: "Shifty Bones",
-          grade: "5.12b",
-          color: "Pink",
-          setter: "Sif",
-          id: 6
-        }
-      ]
-    },
-    {
-      id: 3,
-      name: "Circus Wall",
-      type: "roped",
-      routes: [
-        {
-          name: "Change Soul",
-          grade: "5.11a",
-          color: "Blue",
-          setter: "Solaire",
-          id: 7
-        },
-        {
-          name: "Praise the Sun",
-          grade: "5.10b",
-          color: "Orange",
-          setter: "Solaire",
-          id: 8
-        },
-        {
-          name: "Stabby Acres",
-          grade: "5.12b",
-          color: "Pink",
-          setter: "Sif",
-          id: 9
-        }
-      ]
-    }
-  ]
+  sections: [],
+  routes: [],
+  loading: true
 });
 export const getters = {};
-export const actions = {};
+export const actions = {
+  async getRoutes({ commit }) {
+    let promise = new Promise((resolve, reject) => {
+      firebase.auth().onAuthStateChanged(user => {
+        resolve(user);
+        reject("Ohh no");
+      });
+    });
+    //Use promise to get user with onAuthStateChanged listener
+    let user = await promise;
+    //Use promise to retrun an array of sections to use for state mutation
+
+    fireDb
+      .collection("users")
+      .doc(user.uid)
+      .collection("sections")
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          let section = change.doc.data();
+          section.id = change.doc.id;
+          commit("pushSection", section);
+        });
+      });
+  }
+};
 export const mutations = {
+  pushRoute(state, payload) {
+    if (!state.routes.includes(payload)) {
+      state.routes.push(payload);
+    }
+  },
+  pushSection(state, payload) {
+    if (!state.sections.includes(payload)) {
+      state.sections.push(payload);
+    }
+  },
+  updateRoute(state, payload) {
+    const { route, oldIndex } = payload;
+    state.routes.splice(oldIndex, route);
+  },
   add(state, payload) {
     state.selected = payload;
   },
-  addRoute(state, { route, theSection }) {
-    state.sections.forEach(section => {
-      if (section.name === theSection) {
-        section.routes.push(route);
-      }
-    });
-  },
+
   deleteRoute(state, payload) {
-    if (state.selected) {
-      payload.forEach(load => {
-        state.sections.forEach(section => {
-          section.routes = section.routes.filter(route => {
-            return route.id !== load;
-          });
-        });
-      });
-    }
+    console.log(state.routes);
+    state.routes = state.routes.filter(route => {
+      console.log(route.id);
+      console.log(payload);
+      return route.id !== payload;
+    });
+    console.log(state.routes);
   }
 };

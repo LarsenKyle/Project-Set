@@ -2,13 +2,13 @@
   <div class="Section">
     <v-expansion-panels>
       <v-expansion-panel v-for="section in sections" :key="section.id">
-        <v-expansion-panel-header>{{ section.name }}</v-expansion-panel-header>
+        <v-expansion-panel-header>{{ section.name }} {{section.type}}</v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="text-right">
             <DeleteRoute />
-            <AddRoute :section="section.name" />
+            <AddRoute :section="section" />
           </div>
-          <RouteTable :routes="section.routes" />
+          <RouteTable :section="section.name" />
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -36,6 +36,9 @@ export default {
   computed: {
     sections() {
       return this.$store.state.sections.sections;
+    },
+    routes() {
+      return this.$store.state.sections.routes;
     }
   }
 };
