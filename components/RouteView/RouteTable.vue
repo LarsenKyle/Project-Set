@@ -64,6 +64,7 @@ export default {
           }
         }
       });
+      this.$store.commit("sections/pushRoute", val);
     }
   },
   async mounted() {
@@ -86,7 +87,6 @@ export default {
             let route = change.doc.data();
             route.id = change.doc.id;
             this.routes.push(route);
-            // this.$store.commit("sections/pushRoute", route);
           }
           if (change.type === "removed") {
             let oldRoute = change.doc.id;
@@ -96,12 +96,6 @@ export default {
           }
         });
       });
-
-    // this.routes.forEach(route => {
-    //   if (route.section === this.section) {
-    //     this.sectionsRoutes.push(route);
-    //   }
-    // });
   },
 
   methods: {

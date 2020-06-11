@@ -5,11 +5,13 @@
       <h3
         @click="() => {this.addSectionHandler = !this.addSectionHandler}"
         align="left"
+        :class="{mkPrim:addSectionHandler}"
         class="pt-4"
       >Add New Section</h3>
       <v-icon
         @click="() => {this.addSectionHandler = !this.addSectionHandler}"
         class="mt-4"
+        :class="{mkPrim:addSectionHandler}"
         large
       >mdi-arrow-down-bold-hexagon-outline</v-icon>
 

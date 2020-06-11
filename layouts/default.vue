@@ -22,4 +22,7 @@ a {
   text-decoration: none;
   color: $primary;
 }
+.mkPrim {
+  color: $primary;
+}
 </style>

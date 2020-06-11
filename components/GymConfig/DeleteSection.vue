@@ -5,22 +5,28 @@
       <h3
         @click="() => {this.addSectionHandler = !this.addSectionHandler}"
         align="left"
+        :class="{mkPrim:addSectionHandler}"
         class="pt-4 top"
       >Delete Section</h3>
       <v-icon
         @click="() => {this.addSectionHandler = !this.addSectionHandler}"
         class="mt-4 icon"
+        :class="{mkPrim:addSectionHandler}"
         large
       >mdi-arrow-down-bold-hexagon-outline</v-icon>
 
       <v-select
-        v-if="addSectionHandler"
+        v-if="addSectionHandler && items"
         class="type"
         :items="items"
-        v-model="type"
+        v-model="section"
         label="Section Type"
       ></v-select>
-      <v-btn v-if="addSectionHandler" @click="deleteSection" class="button mt-3">Add Section</v-btn>
+      <v-btn
+        v-if="addSectionHandler && items"
+        @click="deleteSection"
+        class="button mt-3"
+      >Delete Section</v-btn>
     </div>
   </div>
 </template>
@@ -34,7 +40,8 @@ export default {
     return {
       addSectionHandler: false,
       items: [],
-      type: null,
+      sections: [],
+      section: null,
       //Props for snackbar
       text: "",
       snackbar: false,
@@ -45,13 +52,56 @@ export default {
     Snackbar
   },
   methods: {
-    deleteSection() {}
+    deleteSection() {
+      let deleteSection;
+      let deleteItem;
+      this.sections.forEach(sect => {
+        if (sect.name === this.section) {
+          deleteSection = sect.id;
+          deleteItem = sect.name;
+        }
+      });
+      const user = this.$store.state.auth;
+      fireDb
+        .collection("users")
+        .doc(user)
+        .collection("sections")
+        .doc(deleteSection)
+        .delete();
+      this.section = null;
+      this.items = this.items.filter(item => {
+        return item != deleteItem;
+      });
+    }
   },
   mounted() {
-    this.$store.state.sections.sections.forEach(section => {
-      this.items.push(section.name);
-      console.log(section.name);
-    });
+    //If store is not yet populated, subs and populates select input
+    if (this.$store.state.sections.sections.length === 0) {
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type == "sections/pushSection") {
+          this.sections.push(mutation.payload);
+          this.items.push(mutation.payload.name);
+        }
+      });
+    }
+    if (this.items.length === 0) {
+      //
+      //sub to store to allow new sections to populate select input
+      //
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type == "sections/pushSection") {
+          this.sections.push(mutation.payload);
+          this.items.push(mutation.payload.name);
+        }
+      });
+      //
+      // Grabs sections from store and populates select input
+      //
+      this.$store.state.sections.sections.forEach(section => {
+        this.sections.push(section);
+        this.items.push(section.name);
+      });
+    }
   }
 };
 </script>

@@ -26,18 +26,22 @@ export const actions = {
       .collection("sections")
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
-          let section = change.doc.data();
-          section.id = change.doc.id;
-          commit("pushSection", section);
+          if (change.type === "added") {
+            let section = change.doc.data();
+            section.id = change.doc.id;
+            commit("pushSection", section);
+          }
+          if (change.type === "removed") {
+            let section = change.doc.id;
+            commit("deleteSection", section);
+          }
         });
       });
   }
 };
 export const mutations = {
   pushRoute(state, payload) {
-    if (!state.routes.includes(payload)) {
-      state.routes.push(payload);
-    }
+    state.routes.push(payload);
   },
   pushSection(state, payload) {
     if (!state.sections.includes(payload)) {
@@ -51,7 +55,12 @@ export const mutations = {
   add(state, payload) {
     state.selected = payload;
   },
-
+  deleteSection(state, payload) {
+    console.log("Deleteing");
+    state.sections = state.sections.filter(section => {
+      return section.id !== payload;
+    });
+  },
   deleteRoute(state, payload) {
     console.log(state.routes);
     state.routes = state.routes.filter(route => {
