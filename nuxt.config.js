@@ -69,18 +69,7 @@ export default {
       }
     }
   },
-  env: {
-    firebaseKey: {
-      apiKey: "AIzaSyA5uad2fbp5iWaNkbSTy8zrfGnHM6B28PA",
-      authDomain: "project-set-ec0d6.firebaseapp.com",
-      databaseURL: "https://project-set-ec0d6.firebaseio.com",
-      projectId: "project-set-ec0d6",
-      storageBucket: "project-set-ec0d6.appspot.com",
-      messagingSenderId: "952069547094",
-      appId: "1:952069547094:web:8b1a316443b7491f3607f7",
-      measurementId: "G-Y6D6D4J1N3"
-    }
-  },
+  env: {},
   /*
    ** Build configuration
    */

@@ -86,6 +86,7 @@ export default {
   },
   mounted() {
     this.routeChart();
+    console.log(process.env.key);
   }
 };
 </script>
