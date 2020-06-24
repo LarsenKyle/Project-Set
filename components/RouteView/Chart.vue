@@ -1,10 +1,7 @@
 <template>
   <div id="Chart">
     <div class="routeChart">
-      <canvas id="routeChart" width="600" height="300"></canvas>
-    </div>
-    <div class="routeChart">
-      <canvas id="boulderChart" width="600" height="300"></canvas>
+      <canvas id="routeChart" width="400" height="200"></canvas>
     </div>
   </div>
 </template>
@@ -16,16 +13,19 @@ import { fireDb } from "../../plugins/firebase";
 export default {
   data() {
     return {
-      routes: []
+      routes: [],
+      chartType: "Boulder"
     };
   },
   methods: {
-    routes() {
+    routeChart() {
       let grades = [];
       this.$store.state.sections.routes.forEach(route => {
-        grades.push(route.grade);
+        if (route.type === this.chartType) {
+          grades.push(route.grade);
+        }
       });
-      console.log(grades);
+
       let chart = document.getElementById("routeChart");
       let routeChart = new Chart(chart, {
         type: "bar",
@@ -85,9 +85,15 @@ export default {
     }
   },
   mounted() {
-    this.routes();
+    this.routeChart();
   }
 };
 </script>
 
-<style></style>
+<style>
+.routeChart {
+  margin: 0 auto;
+  height: 20vh;
+  width: 60vw;
+}
+</style>

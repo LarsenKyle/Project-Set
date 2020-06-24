@@ -6,9 +6,15 @@
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
     </v-btn>
 
+    <v-btn @click="navTime('chart')" value="favorites">
+      <span>Graph</span>
+      <v-icon v-if="!loading">mdi-poll</v-icon>
+      <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
+    </v-btn>
+
     <v-btn @click="navTime('')" value="favorites">
       <span>Routes</span>
-      <v-icon v-if="!loading">mdi-poll</v-icon>
+      <v-icon v-if="!loading">mdi-wall</v-icon>
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
     </v-btn>
 
@@ -17,7 +23,9 @@
       <v-icon v-if="!loading">mdi-account</v-icon>
       <v-skeleton-loader v-if="loading" class="mx-auto" max-width="40" type="button"></v-skeleton-loader>
     </v-btn>
+
     <v-btn v-if="$store.state.auth" @click="logout" color="primary" class="ml-auto">Log Out</v-btn>
+
     <v-btn
       v-if="!$store.state.auth"
       @click="navTime('login')"

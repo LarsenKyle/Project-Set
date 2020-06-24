@@ -31,7 +31,7 @@ export default {
       dialog: false,
       route: null,
       sectionsRoutes: [],
-      routes: [],
+
       //Vuetify Table Config
       /////////////////////
       singleSelect: false,
@@ -49,6 +49,11 @@ export default {
       ]
     };
   },
+  computed: {
+    routes() {
+      return this.$store.state.sections.routes;
+    }
+  },
   watch: {
     selected: {
       //Runs function when route is selected
@@ -57,6 +62,7 @@ export default {
       }
     },
     routes: function(val) {
+      this.sectionsRoutes = [];
       val.forEach(v => {
         if (!this.sectionsRoutes.includes(v)) {
           if (v.section === this.section) {
@@ -64,38 +70,16 @@ export default {
           }
         }
       });
-      this.$store.commit("sections/pushRoute", val);
     }
   },
-  async mounted() {
-    const user = await this.$store.state.auth;
-    await fireDb
-      .collection("users")
-      .doc(user)
-      .collection("routes")
-      .onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === "modified") {
-            let newRoute = change.doc.data();
-            newRoute.id = change.doc.id;
-            if (newRoute.section === this.section) {
-              const routeIndex = this.sectionsRoutes.indexOf(this.route);
-              this.sectionsRoutes.splice(routeIndex, 1, newRoute);
-            }
-          }
-          if (change.type === "added") {
-            let route = change.doc.data();
-            route.id = change.doc.id;
-            this.routes.push(route);
-          }
-          if (change.type === "removed") {
-            let oldRoute = change.doc.id;
-            this.sectionsRoutes = this.sectionsRoutes.filter(route => {
-              return route.id !== oldRoute;
-            });
-          }
-        });
-      });
+  mounted() {
+    this.routes.forEach(v => {
+      if (!this.sectionsRoutes.includes(v)) {
+        if (v.section === this.section) {
+          this.sectionsRoutes.push(v);
+        }
+      }
+    });
   },
 
   methods: {

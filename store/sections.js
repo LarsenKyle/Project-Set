@@ -37,37 +37,65 @@ export const actions = {
           }
         });
       });
+    fireDb
+      .collection("users")
+      .doc(user.uid)
+      .collection("routes")
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added") {
+            let route = change.doc.data();
+            route.id = change.doc.id;
+
+            commit("pushRoute", route);
+          }
+          if (change.type === "modified") {
+            let route = change.doc.data();
+            route.id = change.doc.id;
+            commit("modRoute", route);
+          }
+          if (change.type === "removed") {
+            let route = change.doc.data();
+            route.id = change.doc.id;
+
+            commit("deleteRoute", route.id);
+          }
+        });
+      });
   }
 };
 export const mutations = {
   pushRoute(state, payload) {
-    state.routes.push(payload);
+    if (!state.routes.includes(payload)) {
+      state.routes.push(payload);
+    }
   },
   pushSection(state, payload) {
     if (!state.sections.includes(payload)) {
       state.sections.push(payload);
     }
   },
-  updateRoute(state, payload) {
-    const { route, oldIndex } = payload;
-    state.routes.splice(oldIndex, route);
+  modRoute(state, payload) {
+    let oldRoute;
+    state.routes.forEach(route => {
+      if (route.id === payload.id) {
+        oldRoute = route;
+      }
+    });
+    const routeIndex = state.routes.indexOf(oldRoute);
+    state.routes.splice(routeIndex, 1, payload);
   },
   add(state, payload) {
     state.selected = payload;
   },
   deleteSection(state, payload) {
-    console.log("Deleteing");
     state.sections = state.sections.filter(section => {
       return section.id !== payload;
     });
   },
   deleteRoute(state, payload) {
-    console.log(state.routes);
     state.routes = state.routes.filter(route => {
-      console.log(route.id);
-      console.log(payload);
       return route.id !== payload;
     });
-    console.log(state.routes);
   }
 };

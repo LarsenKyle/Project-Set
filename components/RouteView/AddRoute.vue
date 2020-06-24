@@ -55,7 +55,8 @@ export default {
         grade: this.grade,
         color: this.color,
         setter: this.setter,
-        section: this.section.name
+        section: this.section.name,
+        type: this.section.type
       };
 
       await fireDb
